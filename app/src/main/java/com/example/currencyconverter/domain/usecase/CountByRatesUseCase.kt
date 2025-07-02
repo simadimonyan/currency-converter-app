@@ -15,7 +15,7 @@ class CountByRatesUseCase @Inject constructor(
 
     suspend fun count(currency: Currency, amount: Double) {
         val countedUnit = rateRepository.getRates(currency, amount)
-        rateStateHolder.updateRateState(RateState(currency, amount, countedUnit.toMutableList()))
+        rateStateHolder.updateRates(countedUnit.toMutableList())
     }
 
 }

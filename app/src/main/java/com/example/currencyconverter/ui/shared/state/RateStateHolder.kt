@@ -3,6 +3,7 @@ package com.example.currencyconverter.ui.shared.state
 import Currency
 import androidx.compose.runtime.Immutable
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import com.example.currencyconverter.domain.entity.Balances
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -12,7 +13,8 @@ import javax.inject.Singleton
 @Immutable
 data class RateState(
     val targetCurrency: Currency = Currency.RUB,
-    val targetValue: Double = 0.0,
+    val targetValue: Double = 1.0,
+    val balances: MutableList<Balances> = mutableListOf<Balances>(),
     val rates: MutableList<RateDto> = mutableListOf<RateDto>()
 )
 

@@ -2,6 +2,7 @@ package com.example.currencyconverter.ui.shared.components
 
 import Currency
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,20 +28,25 @@ import com.example.currencyconverter.ui.theme.lightBlue
 fun CardPreview() {
     Column {
         Spacer(modifier = Modifier.height(60.dp))
-        CardContent(Currency.CAD, "1000")
+        CardContent(Currency.CAD, "0", "1", {})
     }
 }
 
 @Composable
-fun CurrencyCard(currency: Currency, balance: String) {
-    CardContent(currency, balance)
+fun CurrencyCard(
+    currency: Currency,
+    balance: String,
+    rate: String,
+    chooseTarget: (Currency) -> Unit
+) {
+    CardContent(currency, balance, rate, chooseTarget)
 }
 
 @Composable
-fun CardContent(currency: Currency, balance: String) {
+fun CardContent(currency: Currency, balance: String, rate: String, chooseTarget: (Currency) -> Unit) {
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clickable{ chooseTarget(currency) },
         shape = RoundedCornerShape(3.dp),
         colors = CardDefaults.cardColors(containerColor = lightBlue),
         elevation = CardDefaults.cardElevation(2.dp)
@@ -56,10 +62,15 @@ fun CardContent(currency: Currency, balance: String) {
             Column {
                 Text(currency.name, fontWeight=FontWeight.Bold)
                 Text(currency.fullName)
-                Text("Balance: ${currency.symbol} $balance")
+                if (balance != "null") Text("Balance: ${currency.symbol} $balance")
             }
 
             Spacer(modifier = Modifier.weight(1f))
+            Text(
+                "${currency.symbol} ${rate.takeWhile { it != '.' } + rate.dropWhile { it != '.' }.take(6)}",
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.width(10.dp))
         }
     }
 }
