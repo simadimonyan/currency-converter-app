@@ -51,6 +51,7 @@ android {
 
 dependencies {
 
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -92,7 +93,9 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose.v120)
     ksp(libs.hilt.compiler)
+
 
     // navigation
     implementation(libs.androidx.navigation.fragment.ktx)

@@ -6,9 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.currencyconverter.ui.screens.currency.CurrencyScreen
+import com.example.currencyconverter.ui.screens.currency.CurrencyViewModel
 
 @Composable
-fun NavGraph(navHostController: NavHostController) {
+fun NavGraph(
+    navHostController: NavHostController,
+) {
 
     NavHost(
         navController = navHostController,
@@ -24,7 +28,7 @@ fun NavGraph(navHostController: NavHostController) {
                 ExitTransition.None
             }
         ) {
-
+            CurrencyScreen()
         }
 
         composable( // Обмен
