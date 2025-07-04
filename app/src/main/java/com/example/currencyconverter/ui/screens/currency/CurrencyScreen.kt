@@ -6,9 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.currencyconverter.data.dataSource.remote.dto.RateDto
+import com.example.currencyconverter.ui.navigation.Routes
 import com.example.currencyconverter.ui.shared.components.CurrencyCard
 import com.example.currencyconverter.ui.shared.state.RateState
 import kotlinx.coroutines.delay
@@ -34,18 +39,20 @@ fun CurrencyScreenPreview() {
                     "RUB", 0.0
                 )
             )
-        ), {}, {}
+        ), {}, {}, false, {}, {}
     )
 }
 
 @Composable
-fun CurrencyScreen(viewModel: CurrencyViewModel = hiltViewModel()) {
+fun CurrencyScreen(navHostController: NavHostController, viewModel: CurrencyViewModel = hiltViewModel()) {
 
     val state by viewModel.rateStateHolder.rateState.collectAsState()
+    var exchangeProcessFlag by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         while (true) {
             viewModel.handleEvent(CurrencyEvents.UpdateRatesEvent)
+            viewModel.handleEvent(CurrencyEvents.UpdateBalances)
             delay(1000)
         }
     }
@@ -60,20 +67,37 @@ fun CurrencyScreen(viewModel: CurrencyViewModel = hiltViewModel()) {
         viewModel.handleEvent(CurrencyEvents.UpdateRatesEvent)
     }
 
-    CurrencyScreenContent(state, chooseTarget, recountRate)
+    val toggleExchangeFlag: () -> Unit = {
+        exchangeProcessFlag = !exchangeProcessFlag
+    }
+
+    val navigateToExchange: () -> Unit = {
+        navHostController.navigate(Routes.Exchange.route) {
+            popUpTo(navHostController.graph.startDestinationId) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    CurrencyScreenContent(state, chooseTarget, recountRate, exchangeProcessFlag, toggleExchangeFlag, navigateToExchange)
 }
 
 @Composable
 fun CurrencyScreenContent(
     state: RateState,
     chooseTarget: (Currency) -> Unit,
-    recountRate: (Double) -> Unit
+    recountRate: (Double) -> Unit,
+    exchangeProcessFlag: Boolean,
+    toggleExchangeFlag: () -> Unit,
+    navigateToExchange: () -> Unit
 ) {
 
     LazyColumn {
 
         item {
-            val balance: String = state.balances.firstOrNull() { it.currency == state.targetCurrency.name }
+            val balance: String = state.balances.firstOrNull { it.currency == state.targetCurrency.name }
                 ?.amount.toString()
 
             CurrencyCard(
@@ -82,25 +106,34 @@ fun CurrencyScreenContent(
                 balance,
                 state.targetValue.toString(),
                 chooseTarget,
-                recountRate
+                recountRate,
+                exchangeProcessFlag,
+                toggleExchangeFlag,
+                navigateToExchange
             )
         }
         
         items(state.rates.size) { index ->
             val rate = state.rates[index]
 
-            if (rate.currency != state.targetCurrency.name) {
-                val balance: String = state.balances.firstOrNull() { it.currency == state.targetCurrency.name }
-                    ?.amount.toString()
+            val balance: String = state.balances.firstOrNull { it.currency == rate.currency }
+                ?.amount.toString()
 
-                CurrencyCard(
-                    false,
-                    Currency.valueOf(rate.currency),
-                    balance,
-                    rate.value.toString(),
-                    chooseTarget,
-                    recountRate
-                )
+            if (rate.currency != state.targetCurrency.name) {
+                if (!exchangeProcessFlag || (exchangeProcessFlag && balance != "null")) {
+
+                    CurrencyCard(
+                        false,
+                        Currency.valueOf(rate.currency),
+                        balance,
+                        rate.value.toString(),
+                        chooseTarget,
+                        recountRate,
+                        exchangeProcessFlag,
+                        toggleExchangeFlag,
+                        navigateToExchange
+                    )
+                }
             }
         }
     }

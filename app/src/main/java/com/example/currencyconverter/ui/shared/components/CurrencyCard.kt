@@ -46,7 +46,7 @@ import com.example.currencyconverter.ui.theme.lightBlue
 fun CardPreview() {
     Column {
         Spacer(modifier = Modifier.height(60.dp))
-        CardContent(false, Currency.CAD, "0", "1", {}, {})
+        CardContent(false, Currency.CAD, "0", "1", {}, {}, false, {}) {}
     }
 }
 
@@ -57,9 +57,12 @@ fun CurrencyCard(
     balance: String,
     rate: String,
     chooseTarget: (Currency) -> Unit,
-    recountRate: (Double) -> Unit
+    recountRate: (Double) -> Unit,
+    exchangeProcessFlag: Boolean,
+    toggleExchangeFlag: () -> Unit,
+    navigateToExchange: () -> Unit
 ) {
-    CardContent(target, currency, balance, rate, chooseTarget, recountRate)
+    CardContent(target, currency, balance, rate, chooseTarget, recountRate, exchangeProcessFlag, toggleExchangeFlag, navigateToExchange)
 }
 
 @Composable
@@ -69,7 +72,10 @@ fun CardContent(
     balance: String,
     rate: String,
     chooseTarget: (Currency) -> Unit,
-    recountRate: (Double) -> Unit
+    recountRate: (Double) -> Unit,
+    exchangeProcessFlag: Boolean,
+    toggleExchangeFlag: () -> Unit,
+    navigateToExchange: () -> Unit
 ) {
 
     var changeTargetValueFlag by remember { mutableStateOf(false) }
@@ -85,7 +91,13 @@ fun CardContent(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { chooseTarget(currency) },
+            .clickable {
+                if (exchangeProcessFlag && !target) {
+                    navigateToExchange()
+                } else {
+                    chooseTarget(currency)
+                }
+            },
         shape = RoundedCornerShape(3.dp),
         colors = CardDefaults.cardColors(containerColor = lightBlue),
         elevation = CardDefaults.cardElevation(2.dp)
@@ -111,6 +123,7 @@ fun CardContent(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable {
                         if (target) {
+                            toggleExchangeFlag()
                             changeTargetValueFlag = true
                         }
                     })
@@ -157,6 +170,7 @@ fun CardContent(
                     ),
                     keyboardActions = KeyboardActions(onAny = {
                         recountRate(mutableRate.toDoubleOrNull() ?: 1.0)
+                        toggleExchangeFlag()
                         changeTargetValueFlag = false
                         isEditing = false
                     })
@@ -171,6 +185,7 @@ fun CardContent(
                         .clickable {
                             mutableRate = "1.0"
                             recountRate(1.0)
+                            toggleExchangeFlag()
                             changeTargetValueFlag = false
                             isEditing = false
                         },

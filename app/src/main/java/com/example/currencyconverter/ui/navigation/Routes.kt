@@ -8,16 +8,16 @@ sealed class Routes(val route: String) {
     /**
      * Окно мониторинга валют
      */
-    object Currency : Routes("currency")
+    @Serializable object Currency : Routes("currency")
 
     /**
      * Окно для обмена валют
      */
-    object Exchange : Routes("exchange")
+    @Serializable object Exchange : Routes("exchange")
 
     /**
      * Окно для перевода средств
      */
-    object Transaction : Routes("transaction")
+    @Serializable object Transaction : Routes("transaction")
 
 }
