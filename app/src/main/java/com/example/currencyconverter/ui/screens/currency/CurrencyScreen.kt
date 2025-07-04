@@ -34,7 +34,7 @@ fun CurrencyScreenPreview() {
                     "RUB", 0.0
                 )
             )
-        ), {}
+        ), {}, {}
     )
 }
 
@@ -50,16 +50,25 @@ fun CurrencyScreen(viewModel: CurrencyViewModel = hiltViewModel()) {
         }
     }
 
-    val chooseTarget: (Currency) -> Unit = { currency ->
-        viewModel.rateStateHolder.updateTarget(currency, 1.0)
+    val chooseTarget: (Currency) -> Unit = {
+        viewModel.rateStateHolder.updateTarget(it, state.targetValue)
         viewModel.handleEvent(CurrencyEvents.UpdateRatesEvent)
     }
 
-    CurrencyScreenContent(state, chooseTarget)
+    val recountRate: (Double) -> Unit = {
+        viewModel.rateStateHolder.updateTarget(state.targetCurrency, it)
+        viewModel.handleEvent(CurrencyEvents.UpdateRatesEvent)
+    }
+
+    CurrencyScreenContent(state, chooseTarget, recountRate)
 }
 
 @Composable
-fun CurrencyScreenContent(state: RateState, chooseTarget: (Currency) -> Unit) {
+fun CurrencyScreenContent(
+    state: RateState,
+    chooseTarget: (Currency) -> Unit,
+    recountRate: (Double) -> Unit
+) {
 
     LazyColumn {
 
@@ -68,10 +77,12 @@ fun CurrencyScreenContent(state: RateState, chooseTarget: (Currency) -> Unit) {
                 ?.amount.toString()
 
             CurrencyCard(
+                true,
                 state.targetCurrency,
                 balance,
                 state.targetValue.toString(),
-                chooseTarget
+                chooseTarget,
+                recountRate
             )
         }
         
@@ -83,10 +94,12 @@ fun CurrencyScreenContent(state: RateState, chooseTarget: (Currency) -> Unit) {
                     ?.amount.toString()
 
                 CurrencyCard(
+                    false,
                     Currency.valueOf(rate.currency),
                     balance,
                     rate.value.toString(),
-                    chooseTarget
+                    chooseTarget,
+                    recountRate
                 )
             }
         }

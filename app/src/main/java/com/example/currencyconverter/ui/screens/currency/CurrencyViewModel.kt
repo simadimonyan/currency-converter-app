@@ -17,8 +17,7 @@ class CurrencyViewModel @Inject constructor(
 
     fun handleEvent(event: CurrencyEvents) {
         when(event) {
-            is CurrencyEvents.RecountEvent -> TODO()
-            CurrencyEvents.UpdateRatesEvent -> updateRateState()
+            is CurrencyEvents.UpdateRatesEvent -> updateRateState()
         }
     }
 
