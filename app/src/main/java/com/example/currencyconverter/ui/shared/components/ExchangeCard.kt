@@ -91,7 +91,7 @@ fun ExchangeCardContent(
             Column {
                 Text(currency.name, fontWeight=FontWeight.Bold)
                 Text(currency.fullName)
-                if (balance != "null") Text("Balance: ${currency.symbol} $balance")
+                if (balance != "null") Text("Balance: ${currency.symbol} ${balance.takeWhile { it != '.' } + balance.dropWhile { it != '.' }.take(3)}")
             }
 
             Spacer(modifier = Modifier.weight(1f))

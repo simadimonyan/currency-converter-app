@@ -1,6 +1,5 @@
 package com.example.currencyconverter.domain.repository
 
-import androidx.room.RoomDatabase
 import com.example.currencyconverter.data.dataSource.room.ConverterDatabase
 import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import javax.inject.Inject
@@ -13,6 +12,10 @@ class AccountRepository @Inject constructor(
 
     suspend fun getAccounts(): List<AccountDbo> {
         return database.accountDao().getAll()
+    }
+
+    suspend fun setAccounts(vararg accounts: AccountDbo) {
+        database.accountDao().insertAll(*accounts)
     }
 
     suspend fun setDefaults() {

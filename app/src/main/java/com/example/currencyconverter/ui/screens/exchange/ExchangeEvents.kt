@@ -1,5 +1,7 @@
 package com.example.currencyconverter.ui.screens.exchange
 
+import Currency
+
 sealed class ExchangeEvents {
 
     /**
@@ -10,6 +12,6 @@ sealed class ExchangeEvents {
     /**
      * Событие обмена валюты
      */
-    object ExchangeEvent : ExchangeEvents()
+    data class ExchangeEvent(val fromFunds: Currency, val toTarget: Currency, val targetAmount: Double) : ExchangeEvents()
 
 }

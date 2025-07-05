@@ -17,6 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.currencyconverter.ui.screens.currency.CurrencyEvents
 import com.example.currencyconverter.ui.shared.components.ExchangeCardContent
 import com.example.currencyconverter.ui.shared.state.ExchangeState
 import com.example.currencyconverter.ui.theme.lightBlue
@@ -38,8 +42,8 @@ fun ExchangePreview() {
         Currency.RUB,
         10000.0,
         ExchangeState(90.5436),
-        {}
-    )
+        {_, _, _ ->}
+    ) {}
 }
 
 @Composable
@@ -56,7 +60,7 @@ fun ExchangeScreen(
     LaunchedEffect(Unit) {
         while (true) {
             viewModel.handleEvent(ExchangeEvents.CalculateCostEvent(code))
-            delay(1000)
+            delay(1100)
         }
     }
 
@@ -64,10 +68,15 @@ fun ExchangeScreen(
         navHostController.navigateUp()
     }
 
+    val exchange: (Currency, Currency, Double) -> Unit = { fromFunds, toTarget, targetAmount ->
+        viewModel.handleEvent(ExchangeEvents.ExchangeEvent(fromFunds, toTarget, targetAmount))
+        onExit()
+    }
+
     val fundCurrency = Currency.valueOf(code)
 
 
-    ExchangeContent(rateState.targetCurrency, rateState.targetValue, fundCurrency, amount, exchangeState, onExit)
+    ExchangeContent(rateState.targetCurrency, rateState.targetValue, fundCurrency, amount, exchangeState, exchange, onExit)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,10 +87,17 @@ fun ExchangeContent(
     fundCurrency: Currency,
     fundCurrencyAmount: Double,
     exchangeState: ExchangeState,
+    exchange: (Currency, Currency, Double) -> Unit,
     onExit: () -> Unit
 ) {
 
     val cost = targetCurrencyAmount*exchangeState.oneBuyRate
+    var debounceFlag by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(1000)
+        debounceFlag = true
+    }
 
     Scaffold(
         topBar = {
@@ -120,8 +136,9 @@ fun ExchangeContent(
 
                 Button(
                     onClick = {
-
+                        exchange(fundCurrency, targetCurrency, targetCurrencyAmount)
                     },
+                    enabled = debounceFlag,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     colors = ButtonDefaults.buttonColors(containerColor = lightBlue),
                     shape = RoundedCornerShape(5.dp),

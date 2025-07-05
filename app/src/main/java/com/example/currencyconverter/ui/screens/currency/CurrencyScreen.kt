@@ -39,7 +39,7 @@ fun CurrencyPreview() {
                     "RUB", 0.0
                 )
             )
-        ), {}, {}, false, {}, {_, _, ->}
+        ), {}, {}, false, {}, { _, _, ->}
     )
 }
 
@@ -71,8 +71,6 @@ fun CurrencyScreen(navHostController: NavHostController, viewModel: CurrencyView
         exchangeProcessFlag = !exchangeProcessFlag
     }
 
-
-
     val navigateToExchange: (String, Double) -> Unit = { code, amount ->
         navHostController.navigate(Routes.Exchange.routeWithArgs(code, amount.toString())) {
             popUpTo(navHostController.graph.startDestinationId) {
@@ -93,9 +91,8 @@ fun CurrencyContent(
     recountRate: (Double) -> Unit,
     exchangeProcessFlag: Boolean,
     toggleExchangeFlag: () -> Unit,
-    navigateToExchange: (String, Double) -> Unit
+    navigateToExchange: (String, Double) -> Unit,
 ) {
-
     LazyColumn {
 
         item {
@@ -121,8 +118,10 @@ fun CurrencyContent(
             val balance: String = state.balances.firstOrNull { it.currency == rate.currency }
                 ?.amount.toString()
 
+            val balanceCheck = (balance != "null") && (balance.toDouble() >= rate.value)
+
             if (rate.currency != state.targetCurrency.name) {
-                if (!exchangeProcessFlag || (exchangeProcessFlag && (balance != "null") && balance.toDouble() >= rate.value)) {
+                if (!exchangeProcessFlag || (exchangeProcessFlag && balanceCheck)) {
 
                     CurrencyCard(
                         false,

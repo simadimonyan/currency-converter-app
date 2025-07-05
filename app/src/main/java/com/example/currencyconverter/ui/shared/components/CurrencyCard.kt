@@ -1,7 +1,6 @@
 package com.example.currencyconverter.ui.shared.components
 
 import Currency
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,7 +46,7 @@ import com.example.currencyconverter.ui.theme.lightBlue
 fun CardPreview() {
     Column {
         Spacer(modifier = Modifier.height(60.dp))
-        CardContent(false, Currency.CAD, "0", "1", {}, {}, false, {}) {_, _, ->}
+        CardContent(false, Currency.CAD, "0", "1", {}, {}, false, {}) { _, _, -> }
     }
 }
 
@@ -94,7 +93,7 @@ fun CardContent(
             .fillMaxWidth()
             .clickable {
                 if (exchangeProcessFlag && !target) {
-                    Log.d("nav", "${currency.name} $balance")
+                    recountRate(1.0)
                     navigateToExchange(currency.name, balance.toDouble())
                 } else {
                     chooseTarget(currency)
@@ -115,7 +114,7 @@ fun CardContent(
             Column {
                 Text(currency.name, fontWeight=FontWeight.Bold)
                 Text(currency.fullName)
-                if (balance != "null") Text("Balance: ${currency.symbol} $balance")
+                if (balance != "null") Text("Balance: ${currency.symbol} ${balance.takeWhile { it != '.' } + balance.dropWhile { it != '.' }.take(3)}")
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -147,7 +146,6 @@ fun CardContent(
                         color = Color.Black,
                         fontWeight = FontWeight.Bold
                     ),
-                    visualTransformation = RateVisualTransformation(),
                     modifier = Modifier.width(with(LocalDensity.current) { (textWidth+5).toDp().coerceAtLeast(20.dp) }),
                     cursorBrush = SolidColor(Color.Black),
                     onTextLayout = { textLayoutResult ->
