@@ -71,6 +71,8 @@ fun CurrencyScreen(navHostController: NavHostController, viewModel: CurrencyView
         exchangeProcessFlag = !exchangeProcessFlag
     }
 
+
+
     val navigateToExchange: (String, Double) -> Unit = { code, amount ->
         navHostController.navigate(Routes.Exchange.routeWithArgs(code, amount.toString())) {
             popUpTo(navHostController.graph.startDestinationId) {
@@ -120,7 +122,7 @@ fun CurrencyContent(
                 ?.amount.toString()
 
             if (rate.currency != state.targetCurrency.name) {
-                if (!exchangeProcessFlag || (exchangeProcessFlag && balance != "null")) {
+                if (!exchangeProcessFlag || (exchangeProcessFlag && (balance != "null") && balance.toDouble() >= rate.value)) {
 
                     CurrencyCard(
                         false,

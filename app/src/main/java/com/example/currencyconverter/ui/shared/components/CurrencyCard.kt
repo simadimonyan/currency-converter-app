@@ -140,6 +140,7 @@ fun CardContent(
                     onValueChange = {
                         isEditing = true
                         mutableRate = it
+                        recountRate(it.toDoubleOrNull() ?: 1.0)
                     },
                     singleLine = true,
                     textStyle = LocalTextStyle.current.copy(
