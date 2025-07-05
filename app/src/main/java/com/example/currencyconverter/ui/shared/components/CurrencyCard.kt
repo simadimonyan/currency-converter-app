@@ -1,6 +1,7 @@
 package com.example.currencyconverter.ui.shared.components
 
 import Currency
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +47,7 @@ import com.example.currencyconverter.ui.theme.lightBlue
 fun CardPreview() {
     Column {
         Spacer(modifier = Modifier.height(60.dp))
-        CardContent(false, Currency.CAD, "0", "1", {}, {}, false, {}) {}
+        CardContent(false, Currency.CAD, "0", "1", {}, {}, false, {}) {_, _, ->}
     }
 }
 
@@ -60,7 +61,7 @@ fun CurrencyCard(
     recountRate: (Double) -> Unit,
     exchangeProcessFlag: Boolean,
     toggleExchangeFlag: () -> Unit,
-    navigateToExchange: () -> Unit
+    navigateToExchange: (String, Double) -> Unit
 ) {
     CardContent(target, currency, balance, rate, chooseTarget, recountRate, exchangeProcessFlag, toggleExchangeFlag, navigateToExchange)
 }
@@ -75,7 +76,7 @@ fun CardContent(
     recountRate: (Double) -> Unit,
     exchangeProcessFlag: Boolean,
     toggleExchangeFlag: () -> Unit,
-    navigateToExchange: () -> Unit
+    navigateToExchange: (String, Double) -> Unit
 ) {
 
     var changeTargetValueFlag by remember { mutableStateOf(false) }
@@ -93,7 +94,8 @@ fun CardContent(
             .fillMaxWidth()
             .clickable {
                 if (exchangeProcessFlag && !target) {
-                    navigateToExchange()
+                    Log.d("nav", "${currency.name} $balance")
+                    navigateToExchange(currency.name, balance.toDouble())
                 } else {
                     chooseTarget(currency)
                 }

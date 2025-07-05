@@ -20,8 +20,8 @@ import kotlinx.coroutines.delay
 
 @Preview
 @Composable
-fun CurrencyScreenPreview() {
-    CurrencyScreenContent(
+fun CurrencyPreview() {
+    CurrencyContent(
         RateState(
             targetCurrency = Currency.CAD,
             targetValue = 0.00,
@@ -39,7 +39,7 @@ fun CurrencyScreenPreview() {
                     "RUB", 0.0
                 )
             )
-        ), {}, {}, false, {}, {}
+        ), {}, {}, false, {}, {_, _, ->}
     )
 }
 
@@ -71,8 +71,8 @@ fun CurrencyScreen(navHostController: NavHostController, viewModel: CurrencyView
         exchangeProcessFlag = !exchangeProcessFlag
     }
 
-    val navigateToExchange: () -> Unit = {
-        navHostController.navigate(Routes.Exchange.route) {
+    val navigateToExchange: (String, Double) -> Unit = { code, amount ->
+        navHostController.navigate(Routes.Exchange.routeWithArgs(code, amount.toString())) {
             popUpTo(navHostController.graph.startDestinationId) {
                 saveState = true
             }
@@ -81,17 +81,17 @@ fun CurrencyScreen(navHostController: NavHostController, viewModel: CurrencyView
         }
     }
 
-    CurrencyScreenContent(state, chooseTarget, recountRate, exchangeProcessFlag, toggleExchangeFlag, navigateToExchange)
+    CurrencyContent(state, chooseTarget, recountRate, exchangeProcessFlag, toggleExchangeFlag, navigateToExchange)
 }
 
 @Composable
-fun CurrencyScreenContent(
+fun CurrencyContent(
     state: RateState,
     chooseTarget: (Currency) -> Unit,
     recountRate: (Double) -> Unit,
     exchangeProcessFlag: Boolean,
     toggleExchangeFlag: () -> Unit,
-    navigateToExchange: () -> Unit
+    navigateToExchange: (String, Double) -> Unit
 ) {
 
     LazyColumn {
