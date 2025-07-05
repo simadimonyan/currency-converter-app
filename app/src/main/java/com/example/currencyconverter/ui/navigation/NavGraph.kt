@@ -13,6 +13,7 @@ import com.example.currencyconverter.ui.screens.currency.CurrencyScreen
 import com.example.currencyconverter.ui.screens.currency.CurrencyViewModel
 import com.example.currencyconverter.ui.screens.exchange.ExchangeScreen
 import com.example.currencyconverter.ui.screens.exchange.ExchangeViewModel
+import com.example.currencyconverter.ui.screens.transactions.TransactionsScreen
 
 @Composable
 fun NavGraph(
@@ -71,7 +72,7 @@ fun NavGraph(
                 ExitTransition.None
             }
         ) {
-
+            TransactionsScreen()
         }
 
     }
