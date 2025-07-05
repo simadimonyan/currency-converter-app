@@ -93,7 +93,6 @@ fun CardContent(
             .fillMaxWidth()
             .clickable {
                 if (exchangeProcessFlag && !target) {
-                    recountRate(1.0)
                     navigateToExchange(currency.name, balance.toDouble())
                 } else {
                     chooseTarget(currency)

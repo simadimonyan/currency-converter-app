@@ -3,6 +3,7 @@ package com.example.currencyconverter.domain.usecase
 import Currency
 import com.example.currencyconverter.data.dataSource.room.account.dbo.AccountDbo
 import com.example.currencyconverter.domain.repository.AccountRepository
+import com.example.currencyconverter.domain.repository.TransactionRepository
 import com.example.currencyconverter.ui.shared.state.ExchangeStateHolder
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,7 +11,8 @@ import javax.inject.Singleton
 @Singleton
 class ExchangePairUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
-    private val exchangeStateHolder: ExchangeStateHolder
+    private val exchangeStateHolder: ExchangeStateHolder,
+    private val transactionRepository: TransactionRepository
 ) {
 
     suspend fun transfer(fromFunds: Currency, toTarget: Currency, targetAmount: Double) {
@@ -38,6 +40,12 @@ class ExchangePairUseCase @Inject constructor(
         }
 
         accountRepository.setAccounts(*accounts.toTypedArray())
+        transactionRepository.addTransaction(
+            fundsAccount.code,
+            targetAccount.code,
+            (targetAmount * exchangeState.oneBuyRate),
+            targetAmount
+        )
     }
 
 }

@@ -3,18 +3,24 @@ package com.example.currencyconverter.ui.navigation
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.currencyconverter.ui.screens.currency.CurrencyScreen
+import com.example.currencyconverter.ui.screens.currency.CurrencyViewModel
 import com.example.currencyconverter.ui.screens.exchange.ExchangeScreen
+import com.example.currencyconverter.ui.screens.exchange.ExchangeViewModel
 
 @Composable
 fun NavGraph(
     navHostController: NavHostController,
 ) {
+
+    val currencyViewModel: CurrencyViewModel = hiltViewModel()
+    val exchangeViewModel: ExchangeViewModel = hiltViewModel()
 
     NavHost(
         navController = navHostController,
@@ -30,7 +36,7 @@ fun NavGraph(
                 ExitTransition.None
             }
         ) {
-            CurrencyScreen(navHostController)
+            CurrencyScreen(navHostController, currencyViewModel)
         }
 
         composable( // Обмен
@@ -53,7 +59,7 @@ fun NavGraph(
             val code = backstack.arguments?.getString("code") ?: ""
             val amount = backstack.arguments?.getString("balance")?.toDoubleOrNull() ?: 0.00
 
-            ExchangeScreen(navHostController, code, amount)
+            ExchangeScreen(navHostController, code, amount, exchangeViewModel, currencyViewModel)
         }
 
         composable( // Перевод

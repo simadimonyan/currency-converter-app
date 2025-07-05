@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.currencyconverter.ui.screens.currency.CurrencyEvents
+import com.example.currencyconverter.ui.screens.currency.CurrencyViewModel
 import com.example.currencyconverter.ui.shared.components.ExchangeCardContent
 import com.example.currencyconverter.ui.shared.state.ExchangeState
 import com.example.currencyconverter.ui.theme.lightBlue
@@ -51,7 +52,8 @@ fun ExchangeScreen(
     navHostController: NavHostController,
     code: String,
     amount: Double,
-    viewModel: ExchangeViewModel = hiltViewModel()
+    viewModel: ExchangeViewModel = hiltViewModel(),
+    currencyViewModel: CurrencyViewModel
 ) {
 
     val rateState by viewModel.rateStateHolder.rateState.collectAsState()
@@ -70,6 +72,11 @@ fun ExchangeScreen(
 
     val exchange: (Currency, Currency, Double) -> Unit = { fromFunds, toTarget, targetAmount ->
         viewModel.handleEvent(ExchangeEvents.ExchangeEvent(fromFunds, toTarget, targetAmount))
+
+        // откат к базовым значениям
+        currencyViewModel.rateStateHolder.updateTarget(rateState.targetCurrency, 1.0)
+        currencyViewModel.handleEvent(CurrencyEvents.UpdateRatesEvent)
+
         onExit()
     }
 
