@@ -60,20 +60,80 @@ Open the project in **Android Studio**, sync Gradle, and build the project. Then
 ## 📂 Project Structure
 
 ```plaintext
-ui/
-  screens/
-    currency/
-    accounts/
-    exchange/
-    transactions/
-  shared/
-    components/
-    state/
-data/
-  dataSource/
-  repository/
-di/
-  modules/
+currencyconverter
+├── data
+│   └── dataSource
+│       ├── remote
+│       │   ├── dto
+│       │   │   └── RateDto.kt
+│       │   ├── RatesService.kt
+│       │   └── RemoteRatesServiceImpl.kt
+│       └── room
+│           ├── account
+│           │   ├── dao
+│           │   │   └── AccountDao.kt
+│           │   └── dbo
+│           │       └── AccountDbo.kt
+│           ├── converter
+│           │   └── Converters.kt
+│           ├── transaction
+│           │   ├── dao
+│           │   │   └── TransactionDao.kt
+│           │   └── dbo
+│           │       └── TransactionDbo.kt
+│           └── ConverterDatabase.kt
+├── di
+│   └── DatabaseProvider.kt
+├── domain
+│   ├── entity
+│   │   ├── Balance.kt
+│   │   └── Currency.kt
+│   ├── repository
+│   │   ├── AccountRepository.kt
+│   │   ├── RateRepository.kt
+│   │   └── TransactionRepository.kt
+│   └── usecase
+│       ├── CountByRatesUseCase.kt
+│       ├── ExchangePairUseCase.kt
+│       ├── GetAllTransactionsUseCase.kt
+│       ├── GetOneRateCostUseCase.kt
+│       └── UpdateAllBalancesUseCase.kt
+├── ui
+│   ├── navigation
+│   │   ├── NavGraph.kt
+│   │   └── Routes.kt
+│   ├── screens
+│   │   ├── currency
+│   │   │   ├── CurrencyEvents.kt
+│   │   │   ├── CurrencyScreen.kt
+│   │   │   └── CurrencyViewModel.kt
+│   │   ├── exchange
+│   │   │   ├── ExchangeEvents.kt
+│   │   │   ├── ExchangeScreen.kt
+│   │   │   └── ExchangeViewModel.kt
+│   │   ├── transactions
+│   │   │   ├── TransactionsEvents.kt
+│   │   │   ├── TransactionsScreen.kt
+│   │   │   └── TransactionsViewModel.kt
+│   │   └── ActivityScreen.kt
+│   ├── shared
+│   │   ├── components
+│   │   │   ├── cards
+│   │   │   │   ├── CurrencyCard.kt
+│   │   │   │   ├── ExchangeCard.kt
+│   │   │   │   └── TransactionCard.kt
+│   │   │   ├── BottomNavigation.kt
+│   │   │   └── Shimmer.kt
+│   │   └── state
+│   │       ├── ExchangeStateHolder.kt
+│   │       ├── RateStateHolder.kt
+│   │       └── TransactionsStateHolder.kt
+│   ├── theme
+│   │   ├── Color.kt
+│   │   ├── Theme.kt
+│   │   └── Type.kt
+│   └── MainActivity.kt
+└── App.kt
 ```
 
 ---
