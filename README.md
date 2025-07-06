@@ -50,7 +50,7 @@ A modern currency converter and transaction tracker built with **Jetpack Compose
 ## ⚙️ Setup
 
 ```bash
-git clone https://github.com/simadimonyan/currency-converter.git
+git clone https://github.com/simadimonyan/currency-converter-app.git
 ```
 
 Open the project in **Android Studio**, sync Gradle, and build the project. Then run the app on your emulator or connected device.
