@@ -1,6 +1,7 @@
-package com.example.currencyconverter.ui.shared.components
+package com.example.currencyconverter.ui.shared.components.cards
 
 import Currency
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,12 +64,12 @@ fun TransactionContent(
     timestamp: LocalDateTime
 ) {
     Card(
-        modifier = Modifier.padding(horizontal = 5.dp),
+        modifier = Modifier.padding(horizontal = 5.dp).border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.elevatedCardElevation(1.dp),
-        shape = RoundedCornerShape(2.dp)
+        elevation = CardDefaults.elevatedCardElevation(0.dp),
+        shape = RoundedCornerShape(10.dp)
     ) {
-        Column(modifier = Modifier.padding(7.dp)) {
+        Column(modifier = Modifier.padding(15.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text("$to/$from", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                 Spacer(modifier = Modifier.width(5.dp))
@@ -82,7 +83,7 @@ fun TransactionContent(
                 Text("${timestamp.toLocalDate()} ${timestamp.toLocalTime().toString().take(8)}", fontSize = 15.sp, color = Color.Gray)
             }
             Spacer(modifier = Modifier.height(10.dp))
-            HorizontalDivider()
+            //HorizontalDivider()
             Spacer(modifier = Modifier.height(10.dp))
 
             Row {

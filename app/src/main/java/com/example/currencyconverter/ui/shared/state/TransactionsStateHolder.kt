@@ -1,5 +1,6 @@
 package com.example.currencyconverter.ui.shared.state
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import com.example.currencyconverter.data.dataSource.room.transaction.dbo.TransactionDbo
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +10,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class TransactionsState(
-    val transactions: List<TransactionDbo> = mutableListOf()
+    val transactions: List<TransactionDbo> = mutableListOf(),
+    val isLoading: Boolean = false
 )
 
 @Singleton
@@ -21,6 +23,12 @@ class TransactionsStateHolder @Inject constructor() {
 
     fun updateTransactions(transactions: List<TransactionDbo>) {
         _transactionsState.update { it.copy(transactions) }
+    }
+
+    fun updateLoading(isLoading: Boolean) {
+        Log.d("TransactionsStateHolder", "updateLoading called with isLoading = $isLoading")
+        _transactionsState.update { it.copy(isLoading = isLoading) }
+        Log.d("TransactionsStateHolder", "after update, state.isLoading = ${_transactionsState.value.isLoading}")
     }
 
 }

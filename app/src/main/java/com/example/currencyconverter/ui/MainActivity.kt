@@ -1,21 +1,19 @@
 package com.example.currencyconverter.ui
 
 import android.os.Bundle
-import android.text.Layout
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.currencyconverter.ui.navigation.NavGraph
-import com.example.currencyconverter.ui.shared.components.BottomNavigation
+import com.example.currencyconverter.ui.navigation.OverlayNavGraph
+import com.example.currencyconverter.ui.screens.currency.CurrencyViewModel
+import com.example.currencyconverter.ui.screens.exchange.ExchangeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,20 +23,17 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        setContent {
-            setContent {
-                val navHostController = rememberNavController()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
-                Scaffold(
-                    bottomBar = {
-                        BottomNavigation(navHostController)
-                    },
-                    containerColor = Color.Transparent
-                ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding)) {
-                        NavGraph(navHostController)
-                    }
-                }
+        setContent {
+            val overlayNavController = rememberNavController()
+
+            val currencyViewModel: CurrencyViewModel = hiltViewModel()
+            val exchangeViewModel: ExchangeViewModel = hiltViewModel()
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                OverlayNavGraph(overlayNavController, exchangeViewModel, currencyViewModel)
             }
         }
     }

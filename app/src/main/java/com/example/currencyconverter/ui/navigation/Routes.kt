@@ -1,10 +1,14 @@
 package com.example.currencyconverter.ui.navigation
 
-import com.example.currencyconverter.domain.entity.Balance
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Routes(val route: String) {
+
+    /**
+     * Окно для отрисовки
+     */
+    @Serializable object Activity : Routes("activity")
 
     /**
      * Окно мониторинга валют
@@ -19,7 +23,7 @@ sealed class Routes(val route: String) {
     }
 
     /**
-     * Окно для перевода средств
+     * Окно транзакций
      */
     @Serializable object Transaction : Routes("transaction")
 

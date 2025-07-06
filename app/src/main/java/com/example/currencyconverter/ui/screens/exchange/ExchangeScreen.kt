@@ -1,14 +1,22 @@
 package com.example.currencyconverter.ui.screens.exchange
 
 import Currency
+import android.annotation.SuppressLint
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,15 +31,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.currencyconverter.ui.screens.currency.CurrencyEvents
 import com.example.currencyconverter.ui.screens.currency.CurrencyViewModel
-import com.example.currencyconverter.ui.shared.components.ExchangeCardContent
+import com.example.currencyconverter.ui.shared.components.cards.ExchangeCardContent
 import com.example.currencyconverter.ui.shared.state.ExchangeState
-import com.example.currencyconverter.ui.theme.lightBlue
+import com.example.currencyconverter.ui.theme.darkGray
 import kotlinx.coroutines.delay
 
 @Preview
@@ -47,6 +61,7 @@ fun ExchangePreview() {
     ) {}
 }
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun ExchangeScreen(
     navHostController: NavHostController,
@@ -58,6 +73,17 @@ fun ExchangeScreen(
 
     val rateState by viewModel.rateStateHolder.rateState.collectAsState()
     val exchangeState by viewModel.exchangeStateHolder.exchangeState.collectAsState()
+
+    val view = LocalView.current
+    val activity = LocalContext.current as ComponentActivity
+
+    LaunchedEffect(Unit) {
+        activity.enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(Color.White.toArgb(), Color.White.toArgb()),
+            navigationBarStyle = SystemBarStyle.light(Color.White.toArgb(), Color.White.toArgb())
+        )
+        WindowInsetsControllerCompat(activity.window, view).isAppearanceLightStatusBars = true
+    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -110,7 +136,19 @@ fun ExchangeContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("${fundCurrency.fullName} to ${targetCurrency.fullName}", modifier = Modifier.padding(10.dp), color = Color.Black)
+                    Text("${fundCurrency.fullName} to ${targetCurrency.fullName}", color = Color.Black)
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "back",
+                        modifier = Modifier.padding(horizontal = 10.dp).clickable(
+                            interactionSource = null,
+                            indication = null
+                        ) {
+                            onExit()
+                        }
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
@@ -118,8 +156,13 @@ fun ExchangeContent(
         containerColor = Color.White,
         content = { innerPaddings ->
             Column(modifier = Modifier.padding(innerPaddings).padding(horizontal = 15.dp)) {
+
+                Spacer(modifier = Modifier.height(23.dp))
+
                 Text("${targetCurrency.symbol} 1 = ${fundCurrency.symbol} ${exchangeState.oneBuyRate.toString().takeWhile { it != '.' } 
-                        + exchangeState.oneBuyRate.toString().dropWhile { it != '.' }.take(6)}")
+                        + exchangeState.oneBuyRate.toString().dropWhile { it != '.' }.take(6)}",
+                    fontSize = 16.sp, fontWeight = FontWeight.Bold
+                )
 
                 Spacer(modifier = Modifier.height(23.dp))
 
@@ -147,11 +190,12 @@ fun ExchangeContent(
                     },
                     enabled = debounceFlag,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    colors = ButtonDefaults.buttonColors(containerColor = lightBlue),
+                    colors = ButtonDefaults.buttonColors(containerColor = darkGray),
                     shape = RoundedCornerShape(5.dp),
                     elevation = ButtonDefaults.elevatedButtonElevation(2.dp)
                 ) {
-                    Text("Buy ${targetCurrency.fullName} for ${fundCurrency.fullName}", color = Color.Black)
+                    Text("Buy ${targetCurrency.fullName} for ${fundCurrency.fullName}",
+                        color = if (debounceFlag) Color.White else Color.Black)
                 }
 
             }

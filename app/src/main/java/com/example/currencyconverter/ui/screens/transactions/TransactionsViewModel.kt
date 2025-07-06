@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.currencyconverter.domain.usecase.GetAllTransactionsUseCase
 import com.example.currencyconverter.ui.shared.state.TransactionsStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +23,10 @@ class TransactionsViewModel @Inject constructor(
 
     private fun updateTransactions() {
         viewModelScope.launch {
+            transactionsStateHolder.updateLoading(true)
+            delay(500)
             transactionsStateHolder.updateTransactions(getAllTransactionsUseCase.getAll())
+            transactionsStateHolder.updateLoading(false)
         }
     }
 
